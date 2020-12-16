@@ -10,7 +10,7 @@ export const appleProviderConfiguration: Omit<AppleProviderConfiguration, 'clien
   keyID: '',
   callbackURL: '',
   privateKeyString: '',
-  scope: "openid name email profile impersonation",
+  scope: "openid email name impersonation",
   strategy: (options, verify) => {
     console.log('options:', options);
     return new AppleStrategy({
@@ -27,6 +27,8 @@ export const appleProviderConfiguration: Omit<AppleProviderConfiguration, 'clien
 
     // gather claims
     const claims: Partial<OIDCAccountClaims> = {
+      // extract temporary name from email
+      name: userEmail.substring(0, userEmail.lastIndexOf("@")),
       email: userEmail || null,
       email_verified: true,
     };
