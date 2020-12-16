@@ -1,0 +1,61 @@
+<html>
+  <head>
+  <meta name="appleid-signin-client-id" content="com.qmit.service.debug">
+  <meta name="appleid-signin-scope" content="name email">
+  <meta name="appleid-signin-redirect-uri" content="https://api.dev.qmit.pro/iam/login/callback">
+  <meta name="appleid-signin-nonce" content="nonce-8eg2lxaxwf">
+  <meta name="appleid-response-mode" content="formpost">
+  <meta name="appleid-signin-use-popup" content="true">
+  </head>
+<body>
+<script>
+const result = location.hash.substr(1).split("&").map(param => param.split("=")).reduce((obj, [k, v]) => ({...obj, [k]: decodeURIComponent(v)}), {});
+if (!result || result.error) {
+  const error = result && result.error || "Unexpected Error";
+  document.write(`<h3>${error}</h3>`);
+} else {
+  const callbackURI = decodeURIComponent(result.state);
+  const PREFIX = callbackURI.endsWith("=") ? "" : "#auth=";
+  const encodedResult = encodeURIComponent(JSON.stringify(result));
+  document.write(`<h3>Redirect in <span id="second">5.0</span>s to: ${callbackURI}${PREFIX}{RESPONSE}</h3><pre>${JSON.stringify(result, null, 2)}</pre>`);
+
+  const redirect = () => window.location.assign(callbackURI + PREFIX + encodedResult);
+  let time = 5000;
+  const timer = setTimeout(redirect, time);
+  const interval = setInterval(() => {
+    if (time <= 0) {
+      clearInterval(interval);
+    }
+    document.getElementById("second").innerText = (time/1000).toFixed(1);
+    time -= 100;
+  }, 100);
+
+  const go = document.createElement("BUTTON");
+  go.innerText = "Redirect Now";
+  go.addEventListener("click", redirect);
+  go.tabIndex = 0;
+  document.body.appendChild(go);
+  go.focus();
+
+  const clear = () => {
+    clearTimeout(timer);
+    clearInterval(interval);
+  };
+  const stop = document.createElement("BUTTON");
+  stop.innerText = "Stop";
+  stop.addEventListener("click", clear);
+  stop.tabIndex = 1;
+  stop.style.marginLeft = "10px";
+  document.body.appendChild(stop);
+
+  window.addEventListener("keyup", e => {
+    if (e.keyCode === 27 || e.key === "Escape") {
+      clear();
+      stop.setAttribute("disabled", true);
+    }
+  });
+}
+</script>
+<noscript>JavaScript is required</noscript>
+</body>
+</html>
