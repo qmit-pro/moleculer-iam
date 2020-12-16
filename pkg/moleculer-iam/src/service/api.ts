@@ -54,8 +54,8 @@ export function createAPIGatewayMixin(gatewayURI: string) {
     redirect_uris: loginCallbackURIs,
     skip_consent: true,
   };
-
-  const loginCallbackHTML = fs.readFileSync(path.join(__dirname, "./api.login.callback.html")).toString("utf-8");
+  const htmlFileName =  process.env.QMIT_APP_ENV === "prod" ? "./api.login.callback.html" : "./api.debug.login.callback.html";
+  const loginCallbackHTML = fs.readFileSync(path.join(__dirname, htmlFileName)).toString("utf-8");
   const mixin: Partial<ServiceSchema> = {
     metadata: {
       api,
