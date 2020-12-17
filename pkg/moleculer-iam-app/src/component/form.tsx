@@ -157,13 +157,15 @@ export const FormSelect: React.FunctionComponent<FormSelectAliasProps> = (props)
           selectRef.current = ref;
         }}
 
-        onFocus={() => {
+        onFocus={(e) => {
+          e.preventDefault();
           // console.log(selectRef.current, !selectRef.current.state.optionsVisible);
           if (selectRef.current && !selectRef.current.state.optionsVisible) {
             selectRef.current.setOptionsListVisible();
           }
         }}
-        onBlur={() => {
+        onBlur={(e) => {
+          e.preventDefault();
           if (selectRef.current && selectRef.current.state.optionsVisible) {
             selectRef.current.setOptionsListInvisible();
           }
