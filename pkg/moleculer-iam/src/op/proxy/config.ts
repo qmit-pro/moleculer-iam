@@ -107,6 +107,7 @@ export class ProviderConfigBuilder {
     this.app = new ProviderApplicationBuilder(this);
 
     // create static config
+    // https://github.com/panva/node-oidc-provider/blob/master/docs/README.md#ttl
     this.staticConfig = _.defaultsDeep({
       // set adapter constructor
       adapter: adapter.adapterConstructorProxy,
@@ -115,6 +116,33 @@ export class ProviderConfigBuilder {
       claims: undefined,
       scopes: undefined,
       dynamicScopes: [/.+/],
+      // seconds
+      formats: {
+        AccessToken: 'jwt',
+      },
+      ttl: {
+        // prod 10 mins, dev 30 secs
+        AccessToken: process.env.QMIT_APP_ENV === 'prod' ? 600 : 30,
+        // AuthorizationCode: 600,
+        // ClientCredentials: 600,
+        // DeviceCode: 600,
+        // IdToken: 3600,
+        // RefreshToken: function RefreshTokenTTL(ctx: any, token: any, client: any) {
+        //   if (
+        //     ctx && ctx.oidc.entities.RotatedRefreshToken
+        //     && client.applicationType === 'web'
+        //     && client.tokenEndpointAuthMethod === 'none'
+        //     && !token.isSenderConstrained()
+        //   ) {
+        //     // Non-Sender Constrained SPA RefreshTokens do not have infinite expiration through rotation
+        //     return ctx.oidc.entities.RotatedRefreshToken.remainingTTL;
+        //   }
+
+        //   return 14 * 24 * 60 * 60; // 14 days in seconds
+        // }
+      }
+
+
     }, partialStaticConfig, defaultStaticConfig) as StaticConfiguration;
 
     // create dynamic config which are linked to app builder
@@ -190,6 +218,7 @@ export class ProviderConfigBuilder {
     const { logger } = this;
 
     // create provider with config proxy
+    // FIXME:token life span here
     const provider = this.provider = new Provider(this.issuer, _.defaultsDeep(this.dynamicConfig, this.staticConfig));
     // provider.env = "production";
     // provider.proxy = true; // trust http proxy header
