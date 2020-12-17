@@ -33,9 +33,9 @@ broker.createService(
       dev: isDev,
       issuer,
       discovery: {
-        op_policy_uri: `${issuer}/help/policy`,
-        op_tos_uri: `${issuer}/help/tos`,
-        service_documentation: `${issuer}/help`,
+        op_policy_uri: `https://plco.site/privacy/`,
+        op_tos_uri: `https://plco.site/terms/`,
+        service_documentation: `https://plco.site/faq/`,
       },
       app: {
         renderer: {
