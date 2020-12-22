@@ -117,9 +117,9 @@ export class ProviderConfigBuilder {
       scopes: undefined,
       dynamicScopes: [/.+/],
       // seconds
-      formats: {
-        AccessToken: 'jwt',
-      },
+      // formats: {
+      //   AccessToken: 'jwt',
+      // },
       ttl: {
         // prod 10 mins, dev 30 secs
         AccessToken: process.env.QMIT_APP_ENV === 'prod' ? 600 : 30,
