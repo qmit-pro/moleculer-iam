@@ -16,7 +16,8 @@
     "resolveJsonModule": true,
     "isolatedModules": false,
     "noEmit": false,
-    "declaration": true
+    "declaration": true,
+    "noImplicitAny": false
   },
   "include": [
     "./server.ts",

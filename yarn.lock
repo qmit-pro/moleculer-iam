@@ -11489,15 +11489,16 @@ moleculer-api@^0.3.2:
 "moleculer-iam-app@link:pkg/moleculer-iam-app":
   version "0.3.9"
 
-"moleculer-iam@link:pkg/moleculer-iam":
-  version "0.4.3"
+moleculer-iam@^0.3.9:
+  version "0.3.9"
+  resolved "https://registry.yarnpkg.com/moleculer-iam/-/moleculer-iam-0.3.9.tgz#b9e7e1296fb0637d05a3a7ea105b7beaa7456518"
+  integrity sha512-GKtZjGGCyeEt+up3r//TaSWqeDcwJVLhu70+ke7u99gTXJuFl+9wPmDFJB7qcuhv3DDyLy6KvqQsSB+jOBA9hg==
   dependencies:
     accept-language-parser "^1.5.0"
     awesome-phonenumber "^2.33.0"
     bcrypt "^4.0.1"
     change-case "^4.1.1"
     dataloader "^2.0.0"
-    dotenv "^8.2.0"
     fastest-validator "^1.8.0"
     i18next "^19.4.5"
     jose "^1.27.0"
@@ -11517,12 +11518,11 @@ moleculer-api@^0.3.2:
     lodash "^4.17.15"
     lru-cache "^5.1.1"
     moleculer "^0.14.7"
-    moleculer-iam-app "link:pkg/moleculer-iam-app"
+    moleculer-iam-app "link:../../../Library/Caches/Yarn/v6/npm-moleculer-iam-0.3.9-b9e7e1296fb0637d05a3a7ea105b7beaa7456518-integrity/node_modules/moleculer-iam-app"
     moment "^2.26.0"
     mysql2 "^2.1.0"
     object-hash "^2.0.3"
     oidc-provider "^6.26.1"
-    passport-apple "^1.1.1"
     passport-facebook "^3.0.0"
     passport-google-oauth "^2.0.0"
     passport-kakao "^1.0.0"
@@ -16419,7 +16419,7 @@ typescript@3.7.3:
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.7.3.tgz#b36840668a16458a7025b9eabfad11b66ab85c69"
   integrity sha512-Mcr/Qk7hXqFBXMN7p7Lusj1ktCBydylfQM/FZCk5glCNQJrCUKPkMHdo9R0MTFWsC/4kPFvDS0fDPvukfCkFsw==
 
-typescript@^3.9.3:
+typescript@3.9.3, typescript@^3.9.3:
   version "3.9.3"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.9.3.tgz#d3ac8883a97c26139e42df5e93eeece33d610b8a"
   integrity sha512-D/wqnB2xzNFIcoBG9FG8cXRDjiqSTbG2wd8DMZeQyJlP1vfTkIxH4GKveWaEBYySKIg+USu+E+EDIR47SqnaMQ==
