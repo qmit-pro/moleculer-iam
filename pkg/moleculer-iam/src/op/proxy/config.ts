@@ -120,9 +120,9 @@ export class ProviderConfigBuilder {
       // formats: {
       //   AccessToken: 'jwt',
       // },
-      // ttl: {
-        // prod 10 mins, dev 30 secs
-        // AccessToken: process.env.QMIT_APP_ENV === 'prod' ? 600 : 30,
+      ttl: {
+        // prod 10 mins, dev 24 hours
+        AccessToken: process.env.QMIT_APP_ENV === 'prod' ? 60 * 10 : 60 * 60 * 24,
         // AuthorizationCode: 600,
         // ClientCredentials: 600,
         // DeviceCode: 600,
@@ -140,7 +140,7 @@ export class ProviderConfigBuilder {
 
         //   return 14 * 24 * 60 * 60; // 14 days in seconds
         // }
-      // }
+      }
 
 
     }, partialStaticConfig, defaultStaticConfig) as StaticConfiguration;
