@@ -127,6 +127,7 @@ export class ProviderConfigBuilder {
         // ClientCredentials: 600,
         // DeviceCode: 600,
         // IdToken: 3600,
+        IdToken: 60 * 60 * 24,
         // RefreshToken: function RefreshTokenTTL(ctx: any, token: any, client: any) {
         //   if (
         //     ctx && ctx.oidc.entities.RotatedRefreshToken
