@@ -26,9 +26,7 @@
     "generate-jwks": "./bin/generate-jwks.js"
   },
   "nodemonConfig": {
-    "watch": [
-      "src"
-    ],
+    "watch": false,
     "ext": "ts",
     "ignore": [
       "src/**/*.spec.ts"
