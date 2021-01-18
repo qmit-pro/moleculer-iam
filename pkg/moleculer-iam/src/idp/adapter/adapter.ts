@@ -39,13 +39,13 @@ export abstract class IDPAdapter {
   /* CRD identity */
 
   // args will be like { claims:{}, metadata:{}, ... }
-  public abstract async find(args: WhereAttributeHash): Promise<string | void>;
+  public abstract find(args: WhereAttributeHash): Promise<string | void>;
 
   // args will be like { claims:{}, metadata:{}, ... }
-  public abstract async count(args: WhereAttributeHash): Promise<number>;
+  public abstract count(args: WhereAttributeHash): Promise<number>;
 
   // args will be like { where: { claims:{}, metadata:{}, ...}, offset: 0, limit: 100, ... }
-  public abstract async get(args: FindOptions): Promise<string[]>;
+  public abstract get(args: FindOptions): Promise<string[]>;
 
   public async validate(args: { id?: string, scope: string[], claims: Partial<OIDCAccountClaims>, credentials?: Partial<OIDCAccountCredentials> }): Promise<void> {
     const {validateClaims, validateClaimsImmutability, validateClaimsUniqueness} = await this.getCachedActiveClaimsSchemata(args.scope);
@@ -137,7 +137,7 @@ export abstract class IDPAdapter {
     return id;
   }
 
-  public abstract async delete(id: string, transaction?: Transaction): Promise<boolean>;
+  public abstract delete(id: string, transaction?: Transaction): Promise<boolean>;
 
   /* fetch and create claims entities (versioned) */
   public async getClaims(id: string, scope: string[]): Promise<OIDCAccountClaims> {
@@ -249,13 +249,31 @@ export abstract class IDPAdapter {
     },
     (...args: any[]) => JSON.stringify(args),
   );
+  private mergeClaims (newClaims:Partial<OIDCAccountClaims>, oldCliams:Partial<OIDCAccountClaims>): Partial<OIDCAccountClaims>{
+    let result;
+    if (oldCliams.sports === null && newClaims.sports?.teams?.length === 0) {
+      result = _.assignIn(newClaims, oldCliams);
+    } else if (newClaims.sports?.teams?.length === 0) {
+      result = {
+        ...oldCliams,
+        ...newClaims,
+        sports: {
+          ...oldCliams.sports,
+          ...newClaims.sports,
+        },
+      };
+    } else {
+      result = _.defaults(newClaims, oldCliams);
+    }
+    return result;
+  };
 
   public async createOrUpdateClaimsWithValidation(id: string, claims: Partial<OIDCAccountClaims>, scope: string[], creating: boolean, transaction?: Transaction, ignoreUndefinedClaims?: boolean): Promise<void> {
     const {activeClaimsVersions, claimsSchemata, validClaimsKeys} = await this.getCachedActiveClaimsSchemata(scope);
 
     // merge old claims and validate merged one
     const oldClaims = await this.getClaims(id, scope);
-    const mergedClaims: Partial<OIDCAccountClaims> = _.defaultsDeep(claims, oldClaims);
+    const mergedClaims: Partial<OIDCAccountClaims> = this.mergeClaims(claims, oldClaims);
 
     if (ignoreUndefinedClaims === true) {
       const ignoredClaims: any = {};
@@ -380,36 +398,36 @@ export abstract class IDPAdapter {
     }
   }
 
-  public abstract async onClaimsUpdated(id: string, updatedClaims: Partial<OIDCAccountClaims>, transaction?: Transaction): Promise<void>;
+  public abstract onClaimsUpdated(id: string, updatedClaims: Partial<OIDCAccountClaims>, transaction?: Transaction): Promise<void>;
 
-  public abstract async createOrUpdateVersionedClaims(id: string, claims: { key: string, value: any, schemaVersion: string }[], transaction?: Transaction): Promise<void>;
+  public abstract createOrUpdateVersionedClaims(id: string, claims: { key: string, value: any, schemaVersion: string }[], transaction?: Transaction): Promise<void>;
 
-  public abstract async getVersionedClaims(id: string, claims: { key: string, schemaVersion?: string }[]): Promise<Partial<OIDCAccountClaims>>;
+  public abstract getVersionedClaims(id: string, claims: { key: string, schemaVersion?: string }[]): Promise<Partial<OIDCAccountClaims>>;
 
-  public abstract async createClaimsSchema(schema: IdentityClaimsSchema, transaction?: Transaction): Promise<void>;
+  public abstract createClaimsSchema(schema: IdentityClaimsSchema, transaction?: Transaction): Promise<void>;
 
-  public abstract async forceDeleteClaimsSchema(key: string, transaction?: Transaction): Promise<void>;
+  public abstract forceDeleteClaimsSchema(key: string, transaction?: Transaction): Promise<void>;
 
   public async onClaimsSchemaUpdated(): Promise<void> {
     this.getCachedActiveClaimsSchemata.cache.clear!();
   }
 
-  public abstract async getClaimsSchema(args: { key: string, version?: string, active?: boolean }): Promise<IdentityClaimsSchema | void>;
+  public abstract getClaimsSchema(args: { key: string, version?: string, active?: boolean }): Promise<IdentityClaimsSchema | void>;
 
   // scope: [] means all scopes
-  public abstract async getClaimsSchemata(args: { scope: string[], key?: string, version?: string, active?: boolean }): Promise<IdentityClaimsSchema[]>;
+  public abstract getClaimsSchemata(args: { scope: string[], key?: string, version?: string, active?: boolean }): Promise<IdentityClaimsSchema[]>;
 
-  public abstract async setActiveClaimsSchema(args: { key: string; version: string }, transaction?: Transaction): Promise<void>;
+  public abstract setActiveClaimsSchema(args: { key: string; version: string }, transaction?: Transaction): Promise<void>;
 
   /* identity metadata (for federation information, soft deletion, etc. not-versioned) */
-  public abstract async getMetadata(id: string): Promise<IdentityMetadata | void>;
+  public abstract getMetadata(id: string): Promise<IdentityMetadata | void>;
 
-  public abstract async createOrUpdateMetadata(id: string, metadata: Partial<IdentityMetadata>, transaction?: Transaction): Promise<void>;
+  public abstract createOrUpdateMetadata(id: string, metadata: Partial<IdentityMetadata>, transaction?: Transaction): Promise<void>;
 
   /* identity credentials */
-  public abstract async assertCredentials(id: string, credentials: Partial<OIDCAccountCredentials>): Promise<boolean|null>;
+  public abstract assertCredentials(id: string, credentials: Partial<OIDCAccountCredentials>): Promise<boolean|null>;
 
-  protected abstract async createOrUpdateCredentials(id: string, credentials: Partial<OIDCAccountCredentials>, transaction?: Transaction): Promise<boolean>;
+  protected abstract createOrUpdateCredentials(id: string, credentials: Partial<OIDCAccountCredentials>, transaction?: Transaction): Promise<boolean>;
 
   private readonly testCredentials = validator.compile({
     password: {
@@ -462,11 +480,11 @@ export abstract class IDPAdapter {
   }
 
   /* transaction and migration lock for distributed system */
-  public abstract async transaction(): Promise<Transaction>;
+  public abstract transaction(): Promise<Transaction>;
 
-  public abstract async acquireMigrationLock(key: string): Promise<void>;
+  public abstract acquireMigrationLock(key: string): Promise<void>;
 
-  public abstract async touchMigrationLock(key: string, migratedIdentitiesNumber: number): Promise<void>;
+  public abstract touchMigrationLock(key: string, migratedIdentitiesNumber: number): Promise<void>;
 
-  public abstract async releaseMigrationLock(key: string): Promise<void>;
+  public abstract releaseMigrationLock(key: string): Promise<void>;
 }
