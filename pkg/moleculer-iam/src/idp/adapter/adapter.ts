@@ -251,9 +251,13 @@ export abstract class IDPAdapter {
   );
   private mergeClaims (newClaims:Partial<OIDCAccountClaims>, oldCliams:Partial<OIDCAccountClaims>): Partial<OIDCAccountClaims>{
     let result;
-    if (oldCliams.sports === null && newClaims.sports?.teams?.length === 0) {
+    if (oldCliams.sports === null
+        && newClaims.sports
+        && newClaims.sports.teams
+        && newClaims.sports.teams.length === 0
+    ) {
       result = _.assignIn(newClaims, oldCliams);
-    } else if (newClaims.sports?.teams?.length === 0) {
+    } else if (newClaims.sports && newClaims.sports.teams && newClaims.sports.teams.length === 0) {
       result = {
         ...oldCliams,
         ...newClaims,
