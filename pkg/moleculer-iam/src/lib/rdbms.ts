@@ -88,7 +88,13 @@ export class RDBMSManager {
     _.defaultsDeep(opts, defaults);
 
     // get sequelize instance
-    const seq = this.seq = new Sequelize(opts);
+    const seq = this.seq = new Sequelize({...opts,
+      pool: {
+        max: 10,
+        min: 0,
+        acquire: 60000,
+        idle: 30000
+    }});
 
     // create migrator
     this.migrator = new Umzug({
