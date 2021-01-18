@@ -11486,8 +11486,14 @@ moleculer-api@^0.3.2:
     winston "^3.2.1"
     ws "^7.3.0"
 
+"moleculer-iam-app@link:../../../Library/Caches/Yarn/v6/npm-moleculer-iam-0.3.9-b9e7e1296fb0637d05a3a7ea105b7beaa7456518-integrity/node_modules/moleculer-iam-app":
+  version "0.0.0"
+  uid ""
+
 "moleculer-iam-app@link:pkg/moleculer-iam-app":
   version "0.3.9"
+  dependencies:
+    moleculer-iam "^0.3.9"
 
 moleculer-iam@^0.3.9:
   version "0.3.9"
