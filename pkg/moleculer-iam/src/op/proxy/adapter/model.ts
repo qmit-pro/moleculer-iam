@@ -78,9 +78,9 @@ export abstract class OIDCModelProxy implements Adapter {
    * @param {any} opts RDBMS adapter find options cannot be supported for memoryStore or other adapters
    *
    */
-  public abstract async get(args?: FindOptions): Promise<AdapterPayload[]>;
+  public abstract get(args?: FindOptions): Promise<AdapterPayload[]>;
 
-  public abstract async count(args?: WhereAttributeHash): Promise<number>;
+  public abstract count(args?: WhereAttributeHash): Promise<number>;
 
   /**
    *
@@ -94,7 +94,7 @@ export abstract class OIDCModelProxy implements Adapter {
    * @param {integer} expiresIn Number of seconds intended for this model to be stored.
    *
    */
-  public abstract async upsert(id: string, data: AdapterPayload, expiresIn: number): Promise<void>;
+  public abstract upsert(id: string, data: AdapterPayload, expiresIn: number): Promise<void>;
 
   /**
    *
@@ -218,7 +218,7 @@ export abstract class OIDCModelProxy implements Adapter {
    * @param {string} id Identifier of oidc-provider model
    *
    */
-  public abstract async find(id: string): Promise<AdapterPayload | undefined>;
+  public abstract find(id: string): Promise<AdapterPayload | undefined>;
 
   /**
    *
@@ -231,7 +231,7 @@ export abstract class OIDCModelProxy implements Adapter {
    * @param {string} userCode the user_code value associated with a DeviceCode instance
    *
    */
-  public abstract async findByUserCode(userCode: string): Promise<AdapterPayload>;
+  public abstract findByUserCode(userCode: string): Promise<AdapterPayload>;
 
   /**
    *
@@ -243,7 +243,7 @@ export abstract class OIDCModelProxy implements Adapter {
    * @param {string} uid the uid value associated with a Session instance
    *
    */
-  public abstract async findByUid(uid: string): Promise<AdapterPayload>;
+  public abstract findByUid(uid: string): Promise<AdapterPayload>;
 
   /**
    *
@@ -256,7 +256,7 @@ export abstract class OIDCModelProxy implements Adapter {
    * @param {string} id Identifier of oidc-provider model
    *
    */
-  public abstract async consume(id: string): Promise<void>;
+  public abstract consume(id: string): Promise<void>;
 
   /**
    *
@@ -268,10 +268,10 @@ export abstract class OIDCModelProxy implements Adapter {
    * @param {string} id Identifier of oidc-provider model
    *
    */
-  public abstract async destroy(id: string): Promise<void>;
+  public abstract destroy(id: string): Promise<void>;
 
   /* bulk destroy */
-  public abstract async delete(args?: FindOptions): Promise<number>;
+  public abstract delete(args?: FindOptions): Promise<number>;
 
   /**
    *
@@ -283,5 +283,5 @@ export abstract class OIDCModelProxy implements Adapter {
    * @param {string} grantId the grantId value associated with a this model's instance
    *
    */
-  public abstract async revokeByGrantId(grantId: string): Promise<void>;
+  public abstract revokeByGrantId(grantId: string): Promise<void>;
 }
