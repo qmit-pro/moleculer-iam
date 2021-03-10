@@ -9,7 +9,12 @@ const message = {
   "separator.or": "OR",
   "consent.changeAccount": "Continue with other account",
   "consent.visitClientHomepage": "Visit service homepage",
-  "consent.givenScopesRequired": "{scopes} permissions are required.",
+  "consent.givenScopesRequired": "In order to use Plco, we authorize {scopes} rights.",
+  // "consent.givenScopesRequired": "{scopes} permissions are required",
+  "consent.openid": "ID",
+  "consent.email": "email",
+  "consent.phone": "phone number",
+  "consent.sports": "user profile, and plco data",
 
   // ErrorScreen
   "error.cannotClose": "Please close the window manually.",
