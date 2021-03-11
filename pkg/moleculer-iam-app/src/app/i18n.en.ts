@@ -9,7 +9,7 @@ const message = {
   "separator.or": "OR",
   "consent.changeAccount": "Continue with other account",
   "consent.visitClientHomepage": "Visit service homepage",
-  "consent.givenScopesRequired": "In order to use Plco, we authorize {scopes} rights.",
+  "consent.givenScopesRequired": "In order to use Plco, you authorize {scopes} rights.",
   // "consent.givenScopesRequired": "{scopes} permissions are required",
   "consent.openid": "ID",
   "consent.email": "email",
