@@ -9,7 +9,12 @@ export const message: I18NResource = {
   "separator.or": "또는",
   "consent.changeAccount": "다른 계정으로 로그인",
   "consent.visitClientHomepage": "서비스 홈페이지 방문",
-  "consent.givenScopesRequired": "이 서비스에 {scopes} 권한을 허가합니다.",
+  "consent.givenScopesRequired": "플코를 원활하게 이용하기 위해서 {scopes} 권한을 허가합니다.",
+  // "consent.givenScopesRequired": "이 서비스에 {scopes} 권한을 허가합니다.",
+  "consent.openid": "아이디",
+  "consent.email": "이메일",
+  "consent.phone": "휴대전화 번호",
+  "consent.sports": "유저 프로필 및 데이터",
 
   // ErrorScreen
   "error.cannotClose": "창을 직접 닫아주세요.",
