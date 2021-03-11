@@ -75,6 +75,7 @@
     ]
   },
   "dependencies": {
-    "moleculer-iam": "^0.3.9"
+    "moleculer-iam": "^0.3.9",
+    "react-select": "^4.2.1"
   }
 }

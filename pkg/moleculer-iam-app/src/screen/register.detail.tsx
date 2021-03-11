@@ -2,6 +2,58 @@ import moment from "moment";
 import React, { useState } from "react";
 import { ScreenLayout, Text, Form, FormInput, Icon, FormSelect } from "../component";
 import { useNavigation, useAppState, useWithLoading, useAppOptions, useAppI18N } from "../hook";
+import Select from "react-select";
+
+const customJenderSelectStyles = {
+  option: (provided, { data, isDisabled, isFocused, isSelected }) => ({
+    ...provided,
+    background: isSelected ? 'rgba(42, 68, 236, 0.08)' : isFocused ? 'rgba(143, 155, 179, 0.16)':'rgb(255, 255, 255)',
+    ':active': {
+      ...provided[':active'],
+      backgroundColor:
+        !isDisabled && (isSelected ? 'rgba(42, 68, 236, 0.08)' : null),
+    },
+    color: 'color: rgb(34, 43, 69)',
+    padding: '12px 12px',
+    fontSize: '15px',
+  }),
+  input: (provided, state) => ({
+    ...provided,
+  }),
+  menu: (provided, state) => ({
+    ...provided,
+    width: '100%',
+  }),
+  menuList: (provided, state) => ({
+    ...provided,
+    width: '100%',
+    // zIndex: 999999999999,
+    paddingTop: '0px',
+    paddingBottom: '0px',
+  }),
+  indicatorSeparator: (provided, state) => ({
+    ...provided,
+    backgroundColor: 'rgb(255, 255, 255)'
+  }),
+  group: (provided, state) => ({
+    ...provided,
+    width: '100%',
+    // zIndex: 999999999999,
+  }),
+
+  control: (provided, state) => ({
+    ...provided,
+    height: '48px',
+    paddingLeft: '6px',
+    borderColor: 'rgb(204, 204, 204)',
+    boxShadow: 'none',
+    fontSize: '15px',
+    ':hover': {
+      ...provided[':hover'],
+      borderColor: 'rgb(204, 204, 204)',
+    },
+  }),
+}
 
 export const RegisterDetailScreen: React.FunctionComponent = () => {
   // state
@@ -25,12 +77,15 @@ export const RegisterDetailScreen: React.FunctionComponent = () => {
   const genderData = [{
     value: "male",
     text: f({id: "payload.gender.male"}),
+    label: f({id: "payload.gender.male"}),
   }, {
     value: "female",
     text: f({id: "payload.gender.female"}),
+    label: f({id: "payload.gender.female"}),
   }, {
     value: "other",
     text: f({id: "payload.gender.other"}),
+    label: f({id: "payload.gender.other"}),
   }];
 
   const payloadLabels = {
@@ -125,6 +180,9 @@ export const RegisterDetailScreen: React.FunctionComponent = () => {
           tabIndex: 69,
         },
       ]}
+      containerStyle={{
+        paddingBottom: 40
+      }}
     >
       <Text style={{marginBottom: 30}}>
         {f({id: "register.pleaseEnterPhoneNumber"})}
@@ -186,7 +244,7 @@ export const RegisterDetailScreen: React.FunctionComponent = () => {
           style={{marginBottom: 15}}
         />
 
-        <FormSelect
+        {/* <FormSelect
           tabIndex={65}
           label={payloadLabels.claims.gender}
           placeholder={f({id: "placeholder.gender"})}
@@ -194,7 +252,18 @@ export const RegisterDetailScreen: React.FunctionComponent = () => {
           value={payload.gender}
           setValue={v => setPayload(p => ({...p, gender: v}))}
           error={errors["claims.gender"]}
-        />
+        /> */}
+
+      <Select
+        tabIndex={65}
+        onChange={(v) =>setPayload(p => ({...p, gender: v.value}))}
+        isSearchable={false}
+        placeholder={f({id: "placeholder.gender"})}
+        width={'100%'}
+        styles={customJenderSelectStyles}
+        options={genderData}
+        menuPlacement={'top'}
+      />
       </Form>
     </ScreenLayout>
   );
