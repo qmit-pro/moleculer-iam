@@ -6,7 +6,7 @@ metadata:
   name: iam
   namespace: util
 spec:
-  replicas: 1
+  replicas: 2
   template:
     metadata:
       labels:
