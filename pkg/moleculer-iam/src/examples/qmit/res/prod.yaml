@@ -6,7 +6,7 @@ metadata:
   name: iam
   namespace: util
 spec:
-  replicas: 1
+  replicas: 2
   template:
     metadata:
       labels:
@@ -16,7 +16,13 @@ spec:
         - image: gcr.io/qmit-pro/iam:latest
           imagePullPolicy: Always
           name: server
-          resources: {}
+          resources:
+            requests:
+              memory: 1Gi
+              cpu: 200m
+            limits:
+              memory: 1.5Gi
+              cpu: 250m
           env:
             - name: QMIT_APP_ENV
               value: prod
