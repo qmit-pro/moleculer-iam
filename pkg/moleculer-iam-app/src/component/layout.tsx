@@ -1,8 +1,58 @@
-import React, { ReactElement, useEffect, useRef, useState } from "react";
-import { ScrollView, Image, View, ViewProps } from "react-native";
+import React, { ReactElement, useEffect, useRef } from "react";
+import { ScrollView, Image, View, ViewProps, ViewStyle } from "react-native";
 import { useAppOptions, languages, useNavigation } from "../hook";
 import logo from "../assets/logo.svg";
-import { Text, Button, ButtonGroup, ButtonProps, ButtonGroupProps, withAttrs, Separator, activateAutoFocus, isTouchDevice, MenuItem, OverflowMenu, Icon } from "./index";
+import { Text, Button, ButtonGroup, ButtonProps, ButtonGroupProps, withAttrs, Separator, activateAutoFocus, isTouchDevice } from "./index";
+import Select from "react-select";
+
+const customLanguageSelectStyles = {
+  option: (provided, { data, isDisabled, isFocused, isSelected }) => ({
+    ...provided,
+    background: isSelected ? 'rgba(42, 68, 236, 0.08)' : isFocused ? 'rgba(143, 155, 179, 0.16)':'rgb(255, 255, 255)',
+    ':active': {
+      ...provided[':active'],
+      backgroundColor:
+        !isDisabled && (isSelected ? 'rgba(42, 68, 236, 0.08)' : null),
+    },
+    color: 'color: rgb(34, 43, 69)',
+  }),
+  input: (provided, state) => ({
+    ...provided,
+  }),
+  menu: (provided, state) => ({
+    ...provided,
+    fontSize: '12px',
+    padding: '2px',
+  }),
+  menuList: (provided, state) => ({
+    ...provided,
+    width: 'auto',
+    paddingTop: '0px',
+    paddingBottom: '0px',
+  }),
+  indicatorSeparator: (provided, state) => ({
+    ...provided,
+    backgroundColor: 'rgb(255, 255, 255)'
+  }),
+  dropdownIndicator: (provided, state) => ({
+    ...provided,
+  }),
+  control: (provided, state) => ({
+    ...provided,
+    height: '24px',
+    width: '69px',
+    borderColor: 'rgb(255, 255, 255)',
+    borderWdith: '0',
+    boxShadow: 'none',
+    fontSize: '12px',
+    padding: '2px',
+    color: 'rgb(143, 155, 179)',
+    ':hover': {
+      ...provided[':hover'],
+      borderColor: 'rgb(204, 204, 204)',
+    },
+  }),
+}
 
 type LayoutFooterButtonGroupProps = {
   hidden?: boolean;
@@ -47,7 +97,8 @@ export const ScreenLayout: React.FunctionComponent<{
   buttons?: (LayoutFooterButtonProps | LayoutFooterSeparatorProps | LayoutFooterButtonGroupProps)[],
   footer?: ReactElement,
   error?: string,
-}> = ({title = "undefined", subtitle = null, loading = false, children = null, buttons = [], error = null, footer = null }) => {
+  containerStyle?: ViewStyle,
+}> = ({title = "undefined", subtitle = null, loading = false, children = null, buttons = [], error = null, footer = null, containerStyle = {} }) => {
   const { nav } = useNavigation();
   const scrollableRef = useRef<ScrollView|null>(null);
   useEffect(() => {
@@ -72,7 +123,7 @@ export const ScreenLayout: React.FunctionComponent<{
         }
       }}
       style={{width: "100%"}}
-      contentContainerStyle={{width: "100%", marginVertical: "auto", padding: 30}}
+      contentContainerStyle={{width: "100%", marginVertical: "auto", padding: 30, ...containerStyle}}
     >
       <View style={{alignItems: options.logo.align, marginBottom: 20}}>
         <Image source={{uri: options.logo.uri || logo}} style={{height: options.logo.height, width: options.logo.width, resizeMode: "contain"}}/>
@@ -194,11 +245,11 @@ export const ScreenLayout: React.FunctionComponent<{
 };
 
 const LanguageSelector: React.FunctionComponent<ViewProps> = ({ style }) => {
-  const [visible, setVisible] = useState(false);
   const [options, setOptions] = useAppOptions();
   const languageSelectorData = Object.keys(languages).map(code => {
     return {
       title: languages[code],
+      label: code,
       value: code,
     };
   });
@@ -208,31 +259,16 @@ const LanguageSelector: React.FunctionComponent<ViewProps> = ({ style }) => {
     <View style={style}>
       <View style={{flexDirection: "row"}}>
         <View style={{flexGrow: 1}}/>
-        <OverflowMenu
-          anchor={evaProps => (
-            <Button
-              {...evaProps}
-              appearance={"ghost"}
-              status={"basic"}
-              size={"tiny"}
-              onPress={() => setVisible(!visible)}
-              accessoryRight={evaProps2 => <Icon {...evaProps2} style={[evaProps2?.style, { flexDirection: "row-reverse" }]} name={visible ? "chevron-up-outline" : "chevron-down-outline"} />}
-              children={/*{language ? language.title : options.locale.language}*/options.locale.language}
-            />
-          )}
-          visible={visible}
-          selectedIndex={selectedItem ? { row: languageSelectorData.indexOf(selectedItem) } as any : undefined}
-          onSelect={index => {
-            setOptions(o => ({...o, locale: { ...o.locale, language: languageSelectorData[index.row].value}}));
-            setVisible(false);
-          }}
-          onBackdropPress={() => setVisible(false)}
-          placement={"top end"}
-        >
-          {languageSelectorData.map((item, key) => (
-            <MenuItem key={key} {...item} />
-          ))}
-        </OverflowMenu>
+        <Select
+          onChange={(v) =>setOptions(o => ({...o, locale: { ...o.locale, language: v.value}}))}
+          isSearchable={false}
+          width={'69px'}
+          defaultValue={selectedItem}
+          size={2}
+          styles={customLanguageSelectStyles}
+          options={languageSelectorData}
+          menuPlacement={'top'}
+      />
       </View>
     </View>
   );

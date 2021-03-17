@@ -7,7 +7,7 @@ export const ConsentScreen: React.FunctionComponent = () => {
   const { loading, withLoading, errors, setErrors } = useWithLoading();
   const { nav } = useNavigation();
   const [state, dispatch] = useAppState();
-  const { formatMessage: f } = useAppI18N();
+  const { formatMessage: f, locale } = useAppI18N();
 
   // handlers
   const [handleAccept, handleAcceptLoading] = withLoading(() => {
@@ -96,7 +96,7 @@ export const ConsentScreen: React.FunctionComponent = () => {
     >
       <Persona {...user} style={{marginBottom: 30}}/>
       <Text>
-        {f({id: "consent.givenScopesRequired"}, { scopes: scopes.new.concat(scopes.accepted).join(", ")})}
+        {f({id: "consent.givenScopesRequired"}, { scopes: scopes.new.concat(scopes.accepted).filter(scope => scope !== 'offline_access').map(scope => f({id: `consent.${scope}`})).join(", ")})}
       </Text>
     </ScreenLayout>
   );
