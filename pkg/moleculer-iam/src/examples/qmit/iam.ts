@@ -11,6 +11,27 @@ const { APPLE_AUTH_ENV} = env;
 // create service broker
 export const broker = new ServiceBroker(moleculer.createServiceBrokerOptions({
   logLevel: isDebug ? "debug" : "info",
+  requestTimeout: 7 * 1000, // in milliseconds,
+  retryPolicy: {
+    enabled: true,
+    retries: 7,
+    delay: 200,
+    maxDelay: 3000,
+    factor: 2,
+    check: (err) => {
+      return err && !!(err as any).retryable;
+    },
+  },
+  circuitBreaker: {
+    enabled: true,
+    threshold: 0.5,
+    windowTime: 60,
+    minRequestCount: 20,
+    halfOpenTime: 10 * 1000,
+    check: (err) => {
+      return err && (err as any).code && (err as any).code >= 500;
+    },
+  },
 }));
 
 // * dev endpoint for login: http://localhost:9090/op/auth?prompt=login&response_type=code&client_id=api-gateway&redirect_uri=https://api.dev.qmit.pro/iam/login/callback&scope=openid
