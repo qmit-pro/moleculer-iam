@@ -7,6 +7,7 @@ metadata:
   namespace: util
 spec:
   replicas: 1
+  minReadySeconds: 120
   template:
     metadata:
       labels:
