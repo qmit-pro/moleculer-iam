@@ -169,13 +169,15 @@ export abstract class IDPAdapter {
         return obj;
       }, {} as { [key: string]: string });
       const validClaimsKeys = claimsSchemata.map(s => s.key);
-
+      const duplicatedClaimsToDelete: {
+        holderId: string;
+        key: string;
+      }[] = [];
       // get unique claims schemata
       const uniqueClaimsSchemata = claimsSchemata.filter(s => s.unique);
       const uniqueClaimsSchemataKeys = uniqueClaimsSchemata.map(s => s.key);
       const validateClaimsUniqueness = async (id: string | void, object: { [key: string]: any }): Promise<true | ValidationError[]> => {
         if (uniqueClaimsSchemata.length === 0) return true;
-
         const errors: ValidationError[] = [];
         for (const key of uniqueClaimsSchemataKeys) {
           const value = object[key];
@@ -191,12 +193,20 @@ export abstract class IDPAdapter {
 
           const holderId = await this.find({claims: {[key]: value}});
           if (holderId && id !== holderId) {
-            errors.push({
-              type: "duplicate",
-              field: key,
-              actual: value,
-              message: `The '${key}' value is already used by other account.`,
-            });
+            console.log('key:', key);
+            if(key === "fcm_registration_token") {
+              duplicatedClaimsToDelete.push({
+                holderId,
+                key
+              })
+            } else {
+              errors.push({
+                type: "duplicate",
+                field: key,
+                actual: value,
+                message: `The '${key}' value is already used by other account.`,
+              });
+            }
           }
         }
         return errors.length > 0 ? errors : true;
@@ -245,6 +255,7 @@ export abstract class IDPAdapter {
         validateClaimsUniqueness,
         immutableClaimsSchemata,
         validateClaimsImmutability,
+        duplicatedClaimsToDelete,
       };
     },
     (...args: any[]) => JSON.stringify(args),
@@ -273,10 +284,11 @@ export abstract class IDPAdapter {
   };
 
   public async createOrUpdateClaimsWithValidation(id: string, claims: Partial<OIDCAccountClaims>, scope: string[], creating: boolean, transaction?: Transaction, ignoreUndefinedClaims?: boolean): Promise<void> {
-    const {activeClaimsVersions, claimsSchemata, validClaimsKeys} = await this.getCachedActiveClaimsSchemata(scope);
+    const {activeClaimsVersions, claimsSchemata, validClaimsKeys, duplicatedClaimsToDelete} = await this.getCachedActiveClaimsSchemata(scope);
 
     // merge old claims and validate merged one
     const oldClaims = await this.getClaims(id, scope);
+    console.log('claims:', claims);
     const mergedClaims: Partial<OIDCAccountClaims> = this.mergeClaims(claims, oldClaims);
 
     if (ignoreUndefinedClaims === true) {
@@ -307,10 +319,55 @@ export abstract class IDPAdapter {
     }
 
     try {
+      // FIXME: multiple devices should be supported
+      // delete for duplicated fcm token duplicatedClaimsToDelete can contain fcm_registration_token
+      if(duplicatedClaimsToDelete.length > 0) {
+        console.log('duplicatedClaimsToDelete:', duplicatedClaimsToDelete);
+        duplicatedClaimsToDelete.forEach(async (duplicatedClaimToDelete) =>  {
+          const oldClaimsForDuplicatedClaimHolder = await this.getClaims(duplicatedClaimToDelete.holderId, scope);
+          const duplicatedClaim: any = {
+            [duplicatedClaimToDelete.key]: null
+          };
+          const mergedClaimsForDuplicatedClaimHolder: Partial<OIDCAccountClaims> = this.mergeClaims(duplicatedClaim, oldClaimsForDuplicatedClaimHolder);
+          const validClaimEntriesForDuplicatedClaimHolder = Array.from(Object.entries(mergedClaimsForDuplicatedClaimHolder))
+          .filter(([key]) => activeClaimsVersions[key]);
+          console.log('mergedClaimsForDuplicatedClaimHolder:', mergedClaimsForDuplicatedClaimHolder);
+
+          await this.createOrUpdateVersionedClaims(
+            duplicatedClaimToDelete.holderId,
+            validClaimEntriesForDuplicatedClaimHolder
+              .map(([key, value]) => ({
+                key,
+                value,
+                schemaVersion: activeClaimsVersions[key],
+              })),
+            transaction,
+          );
+
+          await this.onClaimsUpdated(
+            duplicatedClaimToDelete.holderId,
+            validClaimEntriesForDuplicatedClaimHolder.reduce((obj, [key, claim]) => {
+              obj[key] = claim;
+              return obj;
+            }, {} as Partial<OIDCAccountClaims>),
+            transaction,
+          );
+
+          // set metadata scope
+          if(id !== duplicatedClaimToDelete.holderId) {
+            await this.createOrUpdateMetadata(duplicatedClaimToDelete.holderId, {
+              scope: claimsSchemata.reduce((obj, s) => {
+                obj[s.scope] = false;
+                return obj;
+              }, {} as { [k: string]: boolean }),
+            }, transaction);
+          }
+        });
+      }
+      // update claims
       const validClaimEntries = Array.from(Object.entries(mergedClaims))
         .filter(([key]) => activeClaimsVersions[key]);
 
-      // update claims
       await this.createOrUpdateVersionedClaims(
         id,
         validClaimEntries
@@ -323,6 +380,10 @@ export abstract class IDPAdapter {
       );
 
       // set metadata scope
+      const meta = claimsSchemata.reduce((obj, s) => {
+        obj[s.scope] = true;
+        return obj;
+      }, {} as { [k: string]: boolean });
       await this.createOrUpdateMetadata(id, {
         scope: claimsSchemata.reduce((obj, s) => {
           obj[s.scope] = true;
