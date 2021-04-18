@@ -352,6 +352,16 @@ export abstract class IDPAdapter {
             }, {} as Partial<OIDCAccountClaims>),
             transaction,
           );
+
+          // set metadata scope
+          if(id !== duplicatedClaimToDelete.holderId) {
+            await this.createOrUpdateMetadata(duplicatedClaimToDelete.holderId, {
+              scope: claimsSchemata.reduce((obj, s) => {
+                obj[s.scope] = false;
+                return obj;
+              }, {} as { [k: string]: boolean }),
+            }, transaction);
+          }
         });
       }
       // update claims
@@ -373,8 +383,7 @@ export abstract class IDPAdapter {
       const meta = claimsSchemata.reduce((obj, s) => {
         obj[s.scope] = true;
         return obj;
-      }, {} as { [k: string]: boolean };
-      console.log('meta:', meta);
+      }, {} as { [k: string]: boolean });
       await this.createOrUpdateMetadata(id, {
         scope: claimsSchemata.reduce((obj, s) => {
           obj[s.scope] = true;
