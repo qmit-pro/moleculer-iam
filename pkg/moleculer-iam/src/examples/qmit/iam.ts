@@ -32,7 +32,7 @@ export const broker = new ServiceBroker(moleculer.createServiceBrokerOptions({
       return err && (err as any).code && (err as any).code >= 500;
     },
   },
-}));
+}) as any);
 
 // * dev endpoint for login: http://localhost:9090/op/auth?prompt=login&response_type=code&client_id=api-gateway&redirect_uri=https://api.dev.qmit.pro/iam/login/callback&scope=openid
 
