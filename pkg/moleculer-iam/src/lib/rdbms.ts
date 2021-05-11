@@ -4,6 +4,9 @@ import readline from "readline";
 import Umzug, { DownToOptions, UpDownMigrationsOptions, UpToOptions } from "umzug";
 import { Sequelize, Options, Model, ModelAttributes, ModelOptions, STRING, Op } from "sequelize";
 import { Logger, LogLevel } from "./logger";
+const cls = require("cls-hooked");
+const namespace = cls.createNamespace("plco");
+Sequelize.useCLS(namespace);
 
 // ignore deprecation warning for string operator alias
 // tslint:disable-next-line:no-var-requires
