@@ -230,6 +230,7 @@ const message = {
         required: "The {field} field is required.",
         string: "The {field} field must be a string.",
         stringEmpty: "The {field} field must not be empty.",
+        emailEmpty: "The {field} field must not be empty.",
         stringMin: "The {field} field length must be greater than or equal to {expected} characters long.",
         stringMax: "The {field} field length must be less than or equal to {expected} characters long.",
         stringLength: "The {field} field length must be {expected} characters long.",

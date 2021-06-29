@@ -1,10 +1,10 @@
 import moment from "moment";
 import React, { useState } from "react";
-import { ScreenLayout, Text, Form, FormInput, Icon, FormSelect } from "../component";
+import { ScreenLayout, Text, Form, FormInput, Icon } from "../component";
 import { useNavigation, useAppState, useWithLoading, useAppOptions, useAppI18N } from "../hook";
 import Select from "react-select";
 
-const customJenderSelectStyles = {
+const customJenderSelectStyles = (isError:boolean = false) => ({
   option: (provided, { data, isDisabled, isFocused, isSelected }) => ({
     ...provided,
     background: isSelected ? 'rgba(42, 68, 236, 0.08)' : isFocused ? 'rgba(143, 155, 179, 0.16)':'rgb(255, 255, 255)',
@@ -45,7 +45,7 @@ const customJenderSelectStyles = {
     ...provided,
     height: '48px',
     paddingLeft: '6px',
-    borderColor: 'rgb(204, 204, 204)',
+    borderColor:  isError ? 'red' :'rgb(204, 204, 204)',
     boxShadow: 'none',
     fontSize: '15px',
     ':hover': {
@@ -53,7 +53,7 @@ const customJenderSelectStyles = {
       borderColor: 'rgb(204, 204, 204)',
     },
   }),
-}
+});
 
 export const RegisterDetailScreen: React.FunctionComponent = () => {
   // state
@@ -244,26 +244,20 @@ export const RegisterDetailScreen: React.FunctionComponent = () => {
           style={{marginBottom: 15}}
         />
 
-        {/* <FormSelect
-          tabIndex={65}
-          label={payloadLabels.claims.gender}
-          placeholder={f({id: "placeholder.gender"})}
-          data={genderData}
-          value={payload.gender}
-          setValue={v => setPayload(p => ({...p, gender: v}))}
-          error={errors["claims.gender"]}
-        /> */}
-
       <Select
         tabIndex={65}
+        errorText={true}
         onChange={(v) =>setPayload(p => ({...p, gender: v.value}))}
         isSearchable={false}
         placeholder={f({id: "placeholder.gender"})}
         width={'100%'}
-        styles={customJenderSelectStyles}
+        styles={customJenderSelectStyles(errors["claims.gender"])}
         options={genderData}
         menuPlacement={'top'}
       />
+      { errors["claims.gender"] && (
+        <Text category={"c1"} status={"danger"}>{errors["claims.gender"]}</Text>
+      )}
       </Form>
     </ScreenLayout>
   );
