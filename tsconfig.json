@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "importHelpers": true,
+    "esModuleInterop": true,
+    "noImplicitAny": true,
+    "skipLibCheck": true,
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "pretty": true,
+    "types": [
+      "jest",
+      "node"
+    ],
+    "sourceMap": true,
+    "declaration": true,
+    "strict": true,
+    "baseUrl": "./",
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "downlevelIteration": true,
+    "allowJs": true
+  },
+  "include": ["src"]
+}
