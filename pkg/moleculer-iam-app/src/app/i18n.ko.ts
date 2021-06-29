@@ -225,6 +225,7 @@ export const message: I18NResource = {
 
         string: "{field}이/가 문자열이 아닙니다.",
         stringEmpty: "{field}이/가 필요합니다.",
+        emailEmpty: "{field}이/가 필요합니다.",
         stringMin: "{field}은/는 {expected} 글자 이상이여야 합니다.",
         stringMax: "{field}은/는 {expected} 글자 이하여야 합니다.",
         stringLength: "{field}은/는 {expected} 글자여야 합니다.",
