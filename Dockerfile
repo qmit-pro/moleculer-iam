@@ -8,6 +8,7 @@ COPY package.json yarn.lock ./
 COPY pkg ./pkg
 RUN NODE_ENV=development yarn
 RUN printenv > .env
+RUN yarn global add typescript ts-node
 RUN yarn build-all
 
-CMD [ "node", "pkg/moleculer-iam/dist/examples/qmit/"]
+CMD [ "ts-node", "pkg/moleculer-iam/src/examples/qmit/"]
